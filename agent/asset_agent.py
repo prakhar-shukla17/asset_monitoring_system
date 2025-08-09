@@ -9,6 +9,7 @@ import json
 import requests
 import schedule
 import sys
+import uuid
 from datetime import datetime
 
 # Import our modules
@@ -24,18 +25,30 @@ class AssetAgent:
         print(f"🏠 Hostname: {HOSTNAME}")
         
     def generate_asset_id(self, hardware_info):
-        """Generate a unique asset ID based on hardware"""
+        """Generate a unique asset ID based on machine characteristics"""
         try:
-            mac = hardware_info['network']['primary_mac']
-            if mac:
-                # Use MAC address for unique ID
-                mac_clean = mac.replace(':', '').replace('-', '').upper()
-                return f"{ASSET_ID_PREFIX}-{mac_clean[:8]}"
-            else:
-                # Fallback to hostname-based ID (consistent)
-                return f"{ASSET_ID_PREFIX}-{HOSTNAME}-1754718922"
+            # Create a consistent UUID based on hostname and MAC address
+            hostname = hardware_info.get('os', {}).get('hostname', HOSTNAME)
+            mac = hardware_info.get('network', {}).get('primary_mac', '')
+            
+            # Create a namespace-based UUID (consistent for same machine)
+            machine_identifier = f"{hostname}-{mac}".encode('utf-8')
+            machine_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, machine_identifier.decode('utf-8'))
+            
+            # Use first 12 characters for shorter ID
+            uuid_short = str(machine_uuid).replace('-', '').upper()[:12]
+            return f"{ASSET_ID_PREFIX}-{uuid_short}"
         except:
-            return f"{ASSET_ID_PREFIX}-{HOSTNAME}-1754718922"
+            # Fallback to MAC address if UUID fails
+            try:
+                mac = hardware_info['network']['primary_mac']
+                if mac:
+                    mac_clean = mac.replace(':', '').replace('-', '').upper()
+                    return f"{ASSET_ID_PREFIX}-{mac_clean[:8]}"
+                else:
+                    return f"{ASSET_ID_PREFIX}-{HOSTNAME}-FALLBACK"
+            except:
+                return f"{ASSET_ID_PREFIX}-{HOSTNAME}-FALLBACK"
     
     def register_asset(self):
         """Register this asset with the server"""

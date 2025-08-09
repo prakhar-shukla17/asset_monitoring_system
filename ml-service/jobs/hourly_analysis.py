@@ -41,7 +41,7 @@ class MLAnalysisJob:
             self.job_count += 1
             start_time = datetime.now()
             
-            logger.info(f"🤖 Starting hourly ML analysis #{self.job_count}")
+            logger.info(f"Starting hourly ML analysis #{self.job_count}")
             logger.info(f"⏰ Started at: {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
             
             # Run analysis for all assets
@@ -102,7 +102,7 @@ class MLAnalysisJob:
 def main():
     """Main function"""
     print("="*60)
-    print("🤖 SIMPLE ASSET MONITOR - ML ANALYSIS JOB")
+    print("SIMPLE ASSET MONITOR - ML ANALYSIS JOB")
     print("="*60)
     
     # Test database connection

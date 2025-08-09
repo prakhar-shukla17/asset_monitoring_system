@@ -39,18 +39,23 @@ def get_disk_info():
         total_storage = 0
         for partition in partitions:
             try:
+                # Skip system partitions that might cause issues
+                if partition.fstype == '' or 'System' in partition.device:
+                    continue
+                    
                 usage = psutil.disk_usage(partition.mountpoint)
                 disk_info = {
-                    'device': partition.device,
-                    'mountpoint': partition.mountpoint,
-                    'fstype': partition.fstype,
+                    'device': str(partition.device),
+                    'mountpoint': str(partition.mountpoint),
+                    'fstype': str(partition.fstype),
                     'total_gb': round(usage.total / (1024**3), 2),
                     'used_gb': round(usage.used / (1024**3), 2),
                     'free_gb': round(usage.free / (1024**3), 2)
                 }
                 disks.append(disk_info)
                 total_storage += usage.total
-            except PermissionError:
+            except (PermissionError, OSError) as e:
+                print(f"Skipping partition {partition.device}: {str(e)}")
                 continue
         
         return {
@@ -58,7 +63,7 @@ def get_disk_info():
             'total_storage_gb': round(total_storage / (1024**3), 2)
         }
     except Exception as e:
-        print(f"Error getting disk info: {e}")
+        print(f"Error getting disk info: {str(e)}")
         return {'disks': [], 'total_storage_gb': 0}
 
 def get_network_info():

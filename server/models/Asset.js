@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 // Simple Asset Schema - keeping it basic
 const assetSchema = new mongoose.Schema({
   // Basic Asset Info
-  asset_id: { type: String, required: true, unique: true },
+  asset_id: { type: String, required: true },
   asset_name: { type: String, required: true },
   hostname: { type: String, required: true },
   ip_address: { type: String },

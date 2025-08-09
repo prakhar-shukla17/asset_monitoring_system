@@ -349,7 +349,9 @@ function updateMLPredictions(predictions) {
         anomalyCount > 3 ? "high" : anomalyCount > 1 ? "medium" : "low";
 
       html += `
-        <div class="prediction-header ${severity}">
+        <div class="prediction-header ${severity}" onclick="toggleAnomalyDetails('${
+        prediction._id
+      }')">
           <h4>🔍 Anomaly Detection</h4>
           <span class="confidence">Rate: ${(data.anomaly_rate * 100).toFixed(
             1
@@ -361,6 +363,16 @@ function updateMLPredictions(predictions) {
           } anomalies detected</p>
           <p class="prediction-details">${data.message}</p>
           <p class="prediction-time">${timeAgo}</p>
+          <button class="btn btn-sm btn-secondary" onclick="showAnomalyDetails('${
+            prediction._id
+          }', ${JSON.stringify(data.anomalies).replace(/"/g, "&quot;")})">
+            📋 View Anomaly Details
+          </button>
+        </div>
+        <div id="anomaly-details-${
+          prediction._id
+        }" class="anomaly-details-container" style="display: none;">
+          <!-- Anomaly details will be populated here -->
         </div>
       `;
     } else if (type === "performance_analysis" && data.success) {
@@ -707,4 +719,120 @@ function getUrlParameter(name) {
   return results === null
     ? ""
     : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+// Anomaly Details Functions
+function showAnomalyDetails(predictionId, anomalies) {
+  const container = document.getElementById(`anomaly-details-${predictionId}`);
+
+  if (!anomalies || anomalies.length === 0) {
+    container.innerHTML =
+      '<p style="color: #666; padding: 15px;">No detailed anomaly data available.</p>';
+    container.style.display = "block";
+    return;
+  }
+
+  let html = `
+    <div class="anomaly-details-header">
+      <h5>🚨 Detailed Anomaly Report</h5>
+      <button class="btn btn-sm btn-secondary" onclick="hideAnomalyDetails('${predictionId}')">✖ Close</button>
+    </div>
+    <div class="anomaly-list">
+  `;
+
+  // Sort anomalies by severity and timestamp
+  const sortedAnomalies = anomalies.sort((a, b) => {
+    const severityOrder = { High: 3, Medium: 2, Low: 1 };
+    if (severityOrder[a.severity] !== severityOrder[b.severity]) {
+      return severityOrder[b.severity] - severityOrder[a.severity];
+    }
+    return new Date(b.timestamp) - new Date(a.timestamp);
+  });
+
+  sortedAnomalies.forEach((anomaly, index) => {
+    const severityClass = anomaly.severity.toLowerCase();
+    const timeFormatted = formatDate(anomaly.timestamp);
+
+    html += `
+      <div class="anomaly-item ${severityClass}">
+        <div class="anomaly-header">
+          <span class="anomaly-number">#${index + 1}</span>
+          <span class="severity-badge ${severityClass}">${
+      anomaly.severity
+    }</span>
+          <span class="anomaly-time">${timeFormatted}</span>
+        </div>
+        <div class="anomaly-metrics">
+          <div class="metric-bar">
+            <label>💻 CPU Usage:</label>
+            <div class="usage-bar">
+              <div class="usage-fill ${getUsageClass(anomaly.cpu_usage)}" 
+                   style="width: ${anomaly.cpu_usage}%"></div>
+            </div>
+            <span class="usage-value">${anomaly.cpu_usage.toFixed(1)}%</span>
+          </div>
+          <div class="metric-bar">
+            <label>🧠 RAM Usage:</label>
+            <div class="usage-bar">
+              <div class="usage-fill ${getUsageClass(anomaly.ram_usage)}" 
+                   style="width: ${anomaly.ram_usage}%"></div>
+            </div>
+            <span class="usage-value">${anomaly.ram_usage.toFixed(1)}%</span>
+          </div>
+          <div class="metric-bar">
+            <label>💾 Disk Usage:</label>
+            <div class="usage-bar">
+              <div class="usage-fill ${getUsageClass(anomaly.disk_usage)}" 
+                   style="width: ${anomaly.disk_usage}%"></div>
+            </div>
+            <span class="usage-value">${anomaly.disk_usage.toFixed(1)}%</span>
+          </div>
+        </div>
+        <div class="anomaly-score">
+          <strong>Anomaly Score:</strong> ${anomaly.anomaly_score.toFixed(3)} 
+          <small>(more negative = more unusual)</small>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+    </div>
+    <div class="anomaly-summary">
+      <p><strong>Total Anomalies:</strong> ${anomalies.length}</p>
+      <p><strong>High Severity:</strong> ${
+        anomalies.filter((a) => a.severity === "High").length
+      }</p>
+      <p><strong>Medium Severity:</strong> ${
+        anomalies.filter((a) => a.severity === "Medium").length
+      }</p>
+      <p><strong>Low Severity:</strong> ${
+        anomalies.filter((a) => a.severity === "Low").length
+      }</p>
+    </div>
+  `;
+
+  container.innerHTML = html;
+  container.style.display = "block";
+}
+
+function hideAnomalyDetails(predictionId) {
+  const container = document.getElementById(`anomaly-details-${predictionId}`);
+  container.style.display = "none";
+}
+
+function toggleAnomalyDetails(predictionId) {
+  const container = document.getElementById(`anomaly-details-${predictionId}`);
+  if (container.style.display === "none" || container.style.display === "") {
+    container.style.display = "block";
+  } else {
+    container.style.display = "none";
+  }
+}
+
+function getUsageClass(percentage) {
+  if (percentage > 90) return "critical";
+  if (percentage > 75) return "high";
+  if (percentage > 50) return "medium";
+  return "low";
 }

@@ -26,7 +26,7 @@ DISK_FULL_WARNING_DAYS = 7   # Alert if disk full in < 7 days
 HIGH_USAGE_THRESHOLD = 90    # Alert if usage > 90%
 ANOMALY_ALERT_THRESHOLD = 3  # Alert if 3+ anomalies in 24h
 
-print(f"🤖 ML Service Configuration:")
+print(f"ML Service Configuration:")
 print(f"   MongoDB: {MONGODB_URI}")
 print(f"   Main Server: {MAIN_SERVER_URL}")
 print(f"   ML Service Port: {ML_SERVICE_PORT}")

@@ -27,7 +27,7 @@ class PredictionService:
         self.client = MongoClient(MONGODB_URI)
         self.db = self.client[DATABASE_NAME]
         
-        print("🤖 Prediction Service initialized")
+        print("Prediction Service initialized")
     
     def get_telemetry_data(self, asset_id, hours=168):  # Default 7 days
         """Get telemetry data for an asset"""
@@ -137,7 +137,7 @@ class PredictionService:
                 days_remaining = prediction['days_remaining']
                 if days_remaining is not None and days_remaining < DISK_FULL_WARNING_DAYS:
                     severity = 'High' if days_remaining < 3 else 'Medium'
-                    message = f"🤖 ML Prediction: Disk will be full in {days_remaining:.1f} days"
+                    message = f"ML Prediction: Disk will be full in {days_remaining:.1f} days"
                     
                     self.create_ml_alert(
                         asset_id, 
@@ -182,7 +182,7 @@ class PredictionService:
                 high_severity_anomalies = [a for a in result['anomalies'] if a['severity'] == 'High']
                 
                 if len(high_severity_anomalies) > 0:
-                    message = f"🤖 ML Alert: {len(high_severity_anomalies)} high-severity anomalies detected"
+                    message = f"ML Alert: {len(high_severity_anomalies)} high-severity anomalies detected"
                     
                     self.create_ml_alert(
                         asset_id,
@@ -192,7 +192,7 @@ class PredictionService:
                         result
                     )
                 elif result['anomaly_count'] >= 3:  # Multiple anomalies
-                    message = f"🤖 ML Alert: {result['anomaly_count']} performance anomalies detected"
+                    message = f"ML Alert: {result['anomaly_count']} performance anomalies detected"
                     
                     self.create_ml_alert(
                         asset_id,
@@ -234,7 +234,7 @@ class PredictionService:
                 
                 if high_priority_recs:
                     for rec in high_priority_recs:
-                        message = f"🤖 ML Recommendation: {rec['message']}"
+                        message = f"ML Recommendation: {rec['message']}"
                         
                         self.create_ml_alert(
                             asset_id,

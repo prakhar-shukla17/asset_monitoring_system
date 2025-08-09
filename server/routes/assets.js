@@ -66,14 +66,8 @@ router.post("/register", async (req, res) => {
     // Generate asset_id if not provided
     const asset_id = req.body.asset_id || `AST-${Date.now()}`;
 
-    // Check if asset already exists
-    let asset = await Asset.findOne({
-      $or: [
-        { asset_id: asset_id },
-        { hostname: hostname },
-        { mac_address: mac_address },
-      ],
-    });
+    // Check if asset already exists (only by asset_id, not hostname/mac)
+    let asset = await Asset.findOne({ asset_id: asset_id });
 
     if (asset) {
       // Update existing asset
