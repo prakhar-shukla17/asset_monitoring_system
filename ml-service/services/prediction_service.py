@@ -84,7 +84,7 @@ class PredictionService:
                 'model_version': '1.0.0'
             }
             
-            result = self.db.mlpredictions.insert_one(prediction_doc)
+            result = self.db.ml_predictions.insert_one(prediction_doc)
             return result.inserted_id
             
         except Exception as e:

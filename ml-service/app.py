@@ -184,7 +184,7 @@ def get_predictions(asset_id):
             query['prediction_type'] = prediction_type
         
         # Fetch predictions
-        predictions = list(prediction_service.db.mlpredictions.find(query)
+        predictions = list(prediction_service.db.ml_predictions.find(query)
                           .sort('created_at', -1)
                           .limit(limit))
         
@@ -218,7 +218,7 @@ def get_ml_statistics():
             }}
         ]
         
-        prediction_stats = list(prediction_service.db.mlpredictions.aggregate(pipeline))
+        prediction_stats = list(prediction_service.db.ml_predictions.aggregate(pipeline))
         
         # Count ML-generated alerts
         ml_alerts_count = prediction_service.db.alerts.count_documents({
@@ -227,7 +227,7 @@ def get_ml_statistics():
         
         # Get recent activity
         last_24h = datetime.now() - timedelta(hours=24)
-        recent_predictions = prediction_service.db.mlpredictions.count_documents({
+        recent_predictions = prediction_service.db.ml_predictions.count_documents({
             'created_at': {'$gte': last_24h}
         })
         
