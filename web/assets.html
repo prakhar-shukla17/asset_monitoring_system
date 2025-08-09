@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assets - Simple Asset Monitor</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🖥️ Simple Asset Monitor</h1>
+        <div class="nav">
+          <a href="index.html">Dashboard</a>
+          <a href="assets.html" class="active">Assets</a>
+          <a href="alerts.html">Alerts</a>
+        </div>
+      </header>
+
+      <main>
+        <!-- Assets Filter and Search -->
+        <div class="section">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 20px;
+            "
+          >
+            <h2>All Assets</h2>
+            <div style="display: flex; gap: 10px">
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Search assets..."
+                style="
+                  padding: 8px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 4px;
+                "
+              />
+              <select
+                id="status-filter"
+                style="
+                  padding: 8px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 4px;
+                "
+              >
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+              <select
+                id="category-filter"
+                style="
+                  padding: 8px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 4px;
+                "
+              >
+                <option value="">All Categories</option>
+                <option value="Desktop">Desktop</option>
+                <option value="Laptop">Laptop</option>
+                <option value="Server">Server</option>
+                <option value="Network">Network</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table id="assets-table">
+              <thead>
+                <tr>
+                  <th>Asset ID</th>
+                  <th>Name</th>
+                  <th>Hostname</th>
+                  <th>Type</th>
+                  <th>IP Address</th>
+                  <th>Status</th>
+                  <th>Hardware</th>
+                  <th>Last Seen</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="9" class="loading">Loading assets...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+
+      <footer>
+        <p>
+          Simple Asset Monitor v1.0.0 | <span id="asset-count">0</span> assets
+          loaded
+        </p>
+      </footer>
+    </div>
+
+    <script src="assets.js"></script>
+  </body>
+</html>
+

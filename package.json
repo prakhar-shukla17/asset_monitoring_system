@@ -1,0 +1,28 @@
+{
+  "name": "simple-asset-monitor",
+  "version": "1.0.0",
+  "description": "Simple IT Asset Monitoring System",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js",
+    "dev": "nodemon server/app.js",
+    "install-all": "npm install && cd agent && pip install -r requirements.txt && cd ../ml-service && pip install -r requirements.txt",
+    "start-ml": "python start_ml_service.py",
+    "start-all": "concurrently \"npm start\" \"npm run start-ml\""
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "nodemailer": "^6.9.1",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "concurrently": "^8.2.0"
+  },
+  "keywords": ["asset", "monitoring", "IT", "hardware", "software"],
+  "author": "IT Team",
+  "license": "MIT"
+}

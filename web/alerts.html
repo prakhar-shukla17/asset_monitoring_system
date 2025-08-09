@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alerts - Simple Asset Monitor</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🖥️ Simple Asset Monitor</h1>
+        <div class="nav">
+          <a href="index.html">Dashboard</a>
+          <a href="assets.html">Assets</a>
+          <a href="alerts.html" class="active">Alerts</a>
+        </div>
+      </header>
+
+      <main>
+        <!-- Alerts Summary -->
+        <div class="summary-cards">
+          <div class="card">
+            <div class="card-icon">🚨</div>
+            <div class="card-content">
+              <h3 id="open-alerts">0</h3>
+              <p>Open Alerts</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🔴</div>
+            <div class="card-content">
+              <h3 id="high-severity">0</h3>
+              <p>High Severity</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🟡</div>
+            <div class="card-content">
+              <h3 id="medium-severity">0</h3>
+              <p>Medium Severity</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-icon">✅</div>
+            <div class="card-content">
+              <h3 id="resolved-today">0</h3>
+              <p>Resolved Today</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts Filter -->
+        <div class="section">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 20px;
+            "
+          >
+            <h2>Alerts</h2>
+            <div style="display: flex; gap: 10px">
+              <select
+                id="status-filter"
+                style="
+                  padding: 8px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 4px;
+                "
+              >
+                <option value="">All Status</option>
+                <option value="Open" selected>Open</option>
+                <option value="Acknowledged">Acknowledged</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+              <select
+                id="severity-filter"
+                style="
+                  padding: 8px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 4px;
+                "
+              >
+                <option value="">All Severity</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+              <select
+                id="type-filter"
+                style="
+                  padding: 8px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 4px;
+                "
+              >
+                <option value="">All Types</option>
+                <option value="hardware_change">Hardware Change</option>
+                <option value="software_change">Software Change</option>
+                <option value="performance_warning">Performance Warning</option>
+                <option value="system_offline">System Offline</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table id="alerts-table">
+              <thead>
+                <tr>
+                  <th>Asset ID</th>
+                  <th>Type</th>
+                  <th>Message</th>
+                  <th>Severity</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="7" class="loading">Loading alerts...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+
+      <footer>
+        <p>
+          Simple Asset Monitor v1.0.0 | <span id="alert-count">0</span> alerts
+          loaded
+        </p>
+      </footer>
+    </div>
+
+    <script src="alerts.js"></script>
+  </body>
+</html>
+

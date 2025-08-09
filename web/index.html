@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Asset Monitor - Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🖥️ Simple Asset Monitor</h1>
+        <div class="nav">
+          <a href="index.html" class="active">Dashboard</a>
+          <a href="assets.html">Assets</a>
+          <a href="alerts.html">Alerts</a>
+        </div>
+      </header>
+
+      <main>
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+          <div class="card">
+            <div class="card-icon">🖥️</div>
+            <div class="card-content">
+              <h3 id="total-assets">0</h3>
+              <p>Total Assets</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🟢</div>
+            <div class="card-content">
+              <h3 id="online-assets">0</h3>
+              <p>Online</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🚨</div>
+            <div class="card-content">
+              <h3 id="open-alerts">0</h3>
+              <p>Open Alerts</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-icon">📊</div>
+            <div class="card-content">
+              <h3 id="avg-performance">0%</h3>
+              <p>Avg CPU Usage</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Assets -->
+        <div class="section">
+          <h2>Recent Assets</h2>
+          <div class="table-container">
+            <table id="recent-assets-table">
+              <thead>
+                <tr>
+                  <th>Asset ID</th>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Last Seen</th>
+                  <th>CPU</th>
+                  <th>RAM</th>
+                  <th>Disk</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="8" class="loading">Loading assets...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recent Alerts -->
+        <div class="section">
+          <h2>Recent Alerts</h2>
+          <div class="table-container">
+            <table id="recent-alerts-table">
+              <thead>
+                <tr>
+                  <th>Asset ID</th>
+                  <th>Type</th>
+                  <th>Message</th>
+                  <th>Severity</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="6" class="loading">Loading alerts...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+
+      <footer>
+        <p>
+          Simple Asset Monitor v1.0.0 | Last updated:
+          <span id="last-updated">Never</span>
+        </p>
+      </footer>
+    </div>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>
