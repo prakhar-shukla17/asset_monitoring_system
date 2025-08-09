@@ -27,17 +27,21 @@ def get_disk_usage():
     """Get current disk usage"""
     try:
         import platform
-        # Try Windows C: drive first if on Windows
+        import shutil
+        import os
+        
+        # Use shutil.disk_usage for better Windows compatibility
         if platform.system() == 'Windows':
-            disk_usage = psutil.disk_usage('C:\\')
+            drive_path = 'C:' + os.sep
+            total, used, free = shutil.disk_usage(drive_path)
         else:
-            disk_usage = psutil.disk_usage('/')
+            total, used, free = shutil.disk_usage('/')
         
         return {
-            'usage_percent': round((disk_usage.used / disk_usage.total) * 100, 2),
-            'used_gb': round(disk_usage.used / (1024**3), 2),
-            'free_gb': round(disk_usage.free / (1024**3), 2),
-            'total_gb': round(disk_usage.total / (1024**3), 2)
+            'usage_percent': round((used / total) * 100, 2),
+            'used_gb': round(used / (1024**3), 2),
+            'free_gb': round(free / (1024**3), 2),
+            'total_gb': round(total / (1024**3), 2)
         }
     except Exception as e:
         print(f"Error getting disk usage: {str(e)}")
