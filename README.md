@@ -1,70 +1,70 @@
 # Simple IT Asset Monitor
 
-A basic web-based system to monitor IT assets, collect hardware/software information, and track changes.
+A basic web-based system to monitor IT assets with AI/ML predictions.
 
 ## Features
 
-- 🖥️ **Auto Hardware Detection** - CPU, RAM, Storage, Network
-- 💿 **Software Inventory** - Installed programs and versions
-- 📊 **Basic Telemetry** - CPU, RAM, Disk usage monitoring
-- 📝 **Manual Entry** - Purchase dates, warranty, license info
-- 🚨 **Change Alerts** - Email notifications when hardware/software changes
-- 🌐 **Web Dashboard** - Simple interface to view and manage assets
-- 🤖 **AI/ML Predictions** - Disk space prediction, anomaly detection, performance analysis
+- 🖥️ Auto Hardware Detection
+- 📊 Performance Monitoring  
+- 🤖 AI/ML Predictions
+- 📝 Manual Asset Info
+- 🚨 Real-time Alerts
 
-## Quick Start
+## Windows Setup
 
-### 1. Install Dependencies
-```bash
-npm run install-all
-```
+### 1. Install MongoDB
+Download and install: https://www.mongodb.com/try/download/community
 
-### 2. Setup Database
-- Install MongoDB locally or use MongoDB Atlas
-- Copy `env.example` to `.env` and update settings
-
-### 3. Start All Services
-```bash
-# Option 1: Start everything together
-npm run start-all
-
-# Option 2: Start services separately
-npm start                    # Main server
-npm run start-ml            # ML service
-```
-
-### 4. Deploy Agent
-```bash
+### 2. Install Dependencies
+```powershell
+npm install
 cd agent
-python asset_agent.py
+pip install -r requirements.txt
+cd ../ml-service  
+pip install -r requirements.txt
+cd ..
+```
+
+### 3. Setup Environment
+```powershell
+copy env.example .env
+# Edit .env file with your MongoDB connection
+```
+
+### 4. Start System
+```powershell
+npm run start-all
 ```
 
 ### 5. Open Dashboard
-Open `http://localhost:3000` in your browser
+http://localhost:3000
 
-## Project Structure
+## Test Components
 
+```powershell
+# Test hardware detection
+cd agent
+python hardware_detector.py
+
+# Test ML models
+cd ../ml-service
+python models/disk_predictor.py
 ```
-simple-asset-monitor/
-├── server/          # Node.js API server
-├── agent/           # Python detection agent
-├── web/             # Simple HTML/CSS/JS frontend
-├── ml-service/      # AI/ML Python service
-└── database/        # Database initialization
+
+## Troubleshooting
+
+### MongoDB Issues
+```powershell
+# Check MongoDB
+mongod --version
+net start MongoDB
 ```
 
-## Basic Usage
+### Port Issues
+```powershell
+# Check if ports are free
+netstat -an | findstr :3000
+netstat -an | findstr :5000
+```
 
-1. **Deploy Agent**: Run the Python agent on target machines
-2. **View Assets**: Open the web dashboard to see detected assets
-3. **Add Manual Info**: Click on assets to add purchase dates, warranty info
-4. **Monitor Changes**: Receive email alerts when changes are detected
-
-## Simple Configuration
-
-All configuration is done through the `.env` file:
-- Database connection
-- Email settings for alerts
-- Basic authentication
-
-This is a simplified system focused on core functionality!
+That's it! Keep it simple. 🚀
