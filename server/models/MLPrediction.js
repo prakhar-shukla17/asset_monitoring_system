@@ -44,5 +44,8 @@ mlPredictionSchema.index(
   { expireAfterSeconds: 30 * 24 * 60 * 60 }
 );
 
-module.exports = mongoose.model("MLPrediction", mlPredictionSchema);
-
+module.exports = mongoose.model(
+  "MLPrediction",
+  mlPredictionSchema,
+  "ml_predictions"
+);
