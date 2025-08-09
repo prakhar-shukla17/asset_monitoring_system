@@ -34,29 +34,56 @@ def get_disk_info():
     """Get disk information"""
     try:
         disks = []
-        partitions = psutil.disk_partitions()
-        
         total_storage = 0
-        for partition in partitions:
-            try:
-                # Skip system partitions that might cause issues
-                if partition.fstype == '' or 'System' in partition.device:
+        
+        # Use shutil for more reliable disk space detection
+        import platform
+        import shutil
+        import os
+        
+        if platform.system() == 'Windows':
+            drive_letters = ['C:', 'D:', 'E:', 'F:', 'G:', 'H:']
+            for drive in drive_letters:
+                try:
+                    drive_path = drive + os.sep
+                    if os.path.exists(drive_path):
+                        # Use shutil.disk_usage (more reliable than psutil on Windows)
+                        total, used, free = shutil.disk_usage(drive_path)
+                        
+                        disk_info = {
+                            'device': drive,
+                            'mountpoint': drive_path,
+                            'fstype': 'NTFS',
+                            'total_gb': round(total / (1024**3), 2),
+                            'used_gb': round(used / (1024**3), 2),
+                            'free_gb': round(free / (1024**3), 2)
+                        }
+                        disks.append(disk_info)
+                        total_storage += total
+                except Exception as e:
+                    print(f"Skipping drive {drive}: {str(e)}")
                     continue
-                    
-                usage = psutil.disk_usage(partition.mountpoint)
-                disk_info = {
-                    'device': str(partition.device),
-                    'mountpoint': str(partition.mountpoint),
-                    'fstype': str(partition.fstype),
-                    'total_gb': round(usage.total / (1024**3), 2),
-                    'used_gb': round(usage.used / (1024**3), 2),
-                    'free_gb': round(usage.free / (1024**3), 2)
-                }
-                disks.append(disk_info)
-                total_storage += usage.total
-            except (PermissionError, OSError) as e:
-                print(f"Skipping partition {partition.device}: {str(e)}")
-                continue
+        else:
+            # Unix/Linux approach using shutil
+            partitions = psutil.disk_partitions()
+            for partition in partitions:
+                try:
+                    if partition.fstype == '' or 'loop' in partition.device:
+                        continue
+                    total, used, free = shutil.disk_usage(partition.mountpoint)
+                    disk_info = {
+                        'device': str(partition.device),
+                        'mountpoint': str(partition.mountpoint),
+                        'fstype': str(partition.fstype),
+                        'total_gb': round(total / (1024**3), 2),
+                        'used_gb': round(used / (1024**3), 2),
+                        'free_gb': round(free / (1024**3), 2)
+                    }
+                    disks.append(disk_info)
+                    total_storage += total
+                except Exception as e:
+                    print(f"Skipping partition {partition.device}: {str(e)}")
+                    continue
         
         return {
             'disks': disks,
@@ -99,11 +126,33 @@ def get_network_info():
         primary_ip = None
         primary_mac = None
         
+        # Try to find Wi-Fi or Ethernet interface first (better priority)
         for iface in interfaces:
-            if iface.get('ip_address') and not iface['ip_address'].startswith('127.'):
+            if (iface.get('ip_address') and iface.get('mac_address') and
+                not iface['ip_address'].startswith('127.') and
+                not iface['ip_address'].startswith('169.254.') and
+                ('Wi-Fi' in iface['interface'] or 'Ethernet' in iface['interface'])):
                 primary_ip = iface['ip_address']
-                primary_mac = iface.get('mac_address')
+                primary_mac = iface['mac_address']
                 break
+        
+        # Fallback: any interface with both IP and MAC
+        if not primary_mac:
+            for iface in interfaces:
+                if (iface.get('ip_address') and iface.get('mac_address') and
+                    not iface['ip_address'].startswith('127.')):
+                    primary_ip = iface['ip_address']
+                    primary_mac = iface['mac_address']
+                    break
+        
+        # Final fallback: any MAC address
+        if not primary_mac:
+            for iface in interfaces:
+                if iface.get('mac_address'):
+                    primary_mac = iface['mac_address']
+                    if not primary_ip and iface.get('ip_address'):
+                        primary_ip = iface['ip_address']
+                    break
         
         return {
             'interfaces': interfaces,
