@@ -191,7 +191,7 @@ function updateRecentAssetsTable() {
 
   if (assetsData.length === 0) {
     tbody.innerHTML =
-      '<tr><td colspan="8" class="loading">No assets found</td></tr>';
+      '<tr><td colspan="9" class="loading">No assets found</td></tr>';
     return;
   }
 
@@ -212,6 +212,7 @@ function updateRecentAssetsTable() {
                 <td><strong>${asset.asset_id}</strong></td>
                 <td>${asset.asset_name || asset.hostname}</td>
                 <td>${asset.asset_category || "Unknown"}</td>
+                <td>${asset.branch || "Main Office"}</td>
                 <td><span class="status ${isOnline ? "online" : "offline"}">${
         isOnline ? "Online" : "Offline"
       }</span></td>

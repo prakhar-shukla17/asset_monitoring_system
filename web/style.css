@@ -301,6 +301,32 @@ footer {
         gap: 15px;
     }
 
+    .nav {
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .nav a {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav {
+        gap: 8px;
+    }
+
+    .nav a {
+        padding: 5px 10px;
+        font-size: 13px;
+    }
+
+    header h1 {
+        font-size: 20px;
+    }
+
     .summary-cards {
         grid-template-columns: 1fr;
     }

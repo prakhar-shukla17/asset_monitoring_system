@@ -14,6 +14,8 @@
           <a href="index.html">Dashboard</a>
           <a href="assets.html" class="active">Assets</a>
           <a href="hardware-components.html">Components</a>
+          <a href="warranty-alerts.html">Warranty Alerts</a>
+          <a href="patch-registry.html">Patch Registry</a>
           <a href="alerts.html">Alerts</a>
         </div>
       </header>
@@ -67,6 +69,21 @@
                 <option value="Server">Server</option>
                 <option value="Network">Network</option>
               </select>
+              <select
+                id="branch-filter"
+                style="
+                  padding: 8px 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 4px;
+                "
+              >
+                <option value="">All Branches</option>
+                <option value="Main Office">Main Office</option>
+                <option value="Branch 1">Branch 1</option>
+                <option value="Branch 2">Branch 2</option>
+                <option value="Branch 3">Branch 3</option>
+                <option value="Remote Office">Remote Office</option>
+              </select>
             </div>
           </div>
 
@@ -78,6 +95,7 @@
                   <th>Name</th>
                   <th>Hostname</th>
                   <th>Type</th>
+                  <th>Branch</th>
                   <th>IP Address</th>
                   <th>Status</th>
                   <th>Hardware</th>
@@ -87,7 +105,7 @@
               </thead>
               <tbody>
                 <tr>
-                  <td colspan="9" class="loading">Loading assets...</td>
+                  <td colspan="10" class="loading">Loading assets...</td>
                 </tr>
               </tbody>
             </table>

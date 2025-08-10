@@ -210,6 +210,9 @@ function updateManualFields() {
   document.getElementById("manual-fields").innerHTML = `
     <div class="info-grid">
       <div class="info-item">
+        <strong>🏢 Branch:</strong> ${currentAsset.branch || "Main Office"}
+      </div>
+      <div class="info-item">
         <strong>📅 Purchase Date:</strong> ${
           manual.purchase_date
             ? formatDateOnly(manual.purchase_date)
@@ -242,6 +245,7 @@ function updateManualFields() {
 
   // Populate form fields
   const form = document.getElementById("manual-fields-form");
+  if (currentAsset.branch) form.branch.value = currentAsset.branch;
   if (manual.purchase_date)
     form.purchase_date.value = manual.purchase_date.split("T")[0];
   if (manual.warranty_expiry)
@@ -616,13 +620,38 @@ async function saveManualFields(event) {
   try {
     const formData = new FormData(event.target);
     const manualFields = {};
+    let branch = null;
 
     for (let [key, value] of formData.entries()) {
       if (value.trim()) {
-        manualFields[key] = value;
+        if (key === "branch") {
+          branch = value;
+        } else {
+          manualFields[key] = value;
+        }
       }
     }
 
+    // Update branch if provided
+    if (branch) {
+      const branchResponse = await fetch(
+        `${API_BASE}/assets/${currentAsset.asset_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ branch }),
+        }
+      );
+
+      const branchResult = await branchResponse.json();
+      if (branchResult.success) {
+        currentAsset = branchResult.data;
+      }
+    }
+
+    // Update manual fields
     const response = await fetch(
       `${API_BASE}/assets/${currentAsset.asset_id}/manual`,
       {
@@ -637,7 +666,7 @@ async function saveManualFields(event) {
     const result = await response.json();
 
     if (result.success) {
-      showSuccess("Manual fields updated successfully!");
+      showSuccess("Asset information updated successfully!");
       currentAsset = result.data;
       updateManualFields();
       toggleEditMode();
@@ -646,7 +675,7 @@ async function saveManualFields(event) {
     }
   } catch (error) {
     console.error("Error saving manual fields:", error);
-    showError("Failed to save manual fields");
+    showError("Failed to save asset information");
   }
 }
 

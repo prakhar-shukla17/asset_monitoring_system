@@ -19,6 +19,9 @@ document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("category-filter")
     .addEventListener("change", filterAssets);
+  document
+    .getElementById("branch-filter")
+    .addEventListener("change", filterAssets);
 
   // Auto-refresh every 60 seconds
   setInterval(loadAssets, 60000);
@@ -55,6 +58,7 @@ function filterAssets() {
     .value.toLowerCase();
   const statusFilter = document.getElementById("status-filter").value;
   const categoryFilter = document.getElementById("category-filter").value;
+  const branchFilter = document.getElementById("branch-filter").value;
 
   filteredAssets = allAssets.filter((asset) => {
     // Search filter
@@ -63,7 +67,9 @@ function filterAssets() {
       asset.asset_id.toLowerCase().includes(searchTerm) ||
       asset.asset_name.toLowerCase().includes(searchTerm) ||
       asset.hostname.toLowerCase().includes(searchTerm) ||
-      (asset.ip_address && asset.ip_address.toLowerCase().includes(searchTerm));
+      (asset.ip_address &&
+        asset.ip_address.toLowerCase().includes(searchTerm)) ||
+      (asset.branch && asset.branch.toLowerCase().includes(searchTerm));
 
     // Status filter
     const matchesStatus = !statusFilter || asset.status === statusFilter;
@@ -72,7 +78,10 @@ function filterAssets() {
     const matchesCategory =
       !categoryFilter || asset.asset_category === categoryFilter;
 
-    return matchesSearch && matchesStatus && matchesCategory;
+    // Branch filter
+    const matchesBranch = !branchFilter || asset.branch === branchFilter;
+
+    return matchesSearch && matchesStatus && matchesCategory && matchesBranch;
   });
 
   updateAssetsTable();
@@ -85,7 +94,7 @@ function updateAssetsTable() {
 
   if (filteredAssets.length === 0) {
     tbody.innerHTML =
-      '<tr><td colspan="9" class="loading">No assets found</td></tr>';
+      '<tr><td colspan="10" class="loading">No assets found</td></tr>';
     return;
   }
 
@@ -100,6 +109,7 @@ function updateAssetsTable() {
                 <td>${asset.asset_name || "-"}</td>
                 <td>${asset.hostname}</td>
                 <td>${asset.asset_category || "Unknown"}</td>
+                <td>${asset.branch || "Main Office"}</td>
                 <td>${asset.ip_address || "-"}</td>
                 <td><span class="status ${isOnline ? "online" : "offline"}">${
         isOnline ? "Online" : "Offline"

@@ -340,6 +340,41 @@ router.delete("/:id/components/:componentIndex", async (req, res) => {
   }
 });
 
+// Update asset
+router.put("/:id", async (req, res) => {
+  try {
+    const asset = await Asset.findOne({ asset_id: req.params.id });
+    if (!asset) {
+      return res.status(404).json({
+        success: false,
+        message: "Asset not found",
+      });
+    }
+
+    // Update allowed fields
+    const allowedFields = ["branch", "asset_name", "status", "asset_category"];
+    for (const field of allowedFields) {
+      if (req.body[field] !== undefined) {
+        asset[field] = req.body[field];
+      }
+    }
+
+    await asset.save();
+
+    res.json({
+      success: true,
+      message: "Asset updated successfully",
+      data: asset,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating asset",
+      error: error.message,
+    });
+  }
+});
+
 // Update manual fields
 router.put("/:id/manual", async (req, res) => {
   try {
