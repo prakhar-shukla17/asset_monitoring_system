@@ -22,6 +22,7 @@ app.use("/api/telemetry", require("./routes/telemetry"));
 app.use("/api/alerts", require("./routes/alerts"));
 app.use("/api/ml", require("./routes/ml"));
 app.use("/api/software", require("./routes/software"));
+app.use("/api/patch-registry", require("./routes/patch-registry"));
 
 // Basic health check
 app.get("/api/health", (req, res) => {

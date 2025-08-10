@@ -11,18 +11,26 @@
     "start-all": "concurrently \"npm start\" \"npm run start-ml\""
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^7.0.3",
+    "@google/generative-ai": "^0.21.0",
+    "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "nodemailer": "^6.9.1",
-    "axios": "^1.4.0"
+    "express": "^4.18.2",
+    "mongoose": "^7.0.3",
+    "nodemailer": "^6.9.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22",
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "nodemon": "^2.0.22"
   },
-  "keywords": ["asset", "monitoring", "IT", "hardware", "software"],
+  "keywords": [
+    "asset",
+    "monitoring",
+    "IT",
+    "hardware",
+    "software"
+  ],
   "author": "IT Team",
   "license": "MIT"
 }

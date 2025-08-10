@@ -28,6 +28,7 @@ async function loadDashboardData() {
       loadTelemetry(),
       loadAlerts(),
       loadWarrantyAlerts(),
+      loadPatchRegistryStats(),
     ]);
 
     // Update UI
@@ -112,6 +113,30 @@ async function loadWarrantyAlerts() {
   } catch (error) {
     console.error("Error loading warranty alerts:", error);
     warrantyAlertsData = [];
+  }
+}
+
+// Load patch registry statistics
+async function loadPatchRegistryStats() {
+  try {
+    const response = await fetch(`${API_BASE}/patch-registry/statistics`);
+    const result = await response.json();
+
+    if (result.success) {
+      // Store patch registry stats globally
+      window.patchRegistryStats = result.data;
+      console.log(`🛠️ Loaded patch registry statistics`);
+    } else {
+      throw new Error(result.message);
+    }
+  } catch (error) {
+    console.error("Error loading patch registry stats:", error);
+    window.patchRegistryStats = {
+      total_alerts: 0,
+      critical_alerts: 0,
+      high_alerts: 0,
+      new_alerts: 0,
+    };
   }
 }
 
