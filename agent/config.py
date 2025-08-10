@@ -10,7 +10,7 @@ API_ENDPOINTS = {
 }
 
 # Collection Settings
-TELEMETRY_INTERVAL = 3  # 3 seconds
+TELEMETRY_INTERVAL = 300  # 5 minutes
 DISCOVERY_INTERVAL = 3600  # 1 hour in seconds
 
 # Asset ID Generation

@@ -6,6 +6,7 @@ const API_BASE = "/api";
 let assetsData = [];
 let telemetryData = [];
 let alertsData = [];
+let warrantyAlertsData = [];
 
 // Initialize dashboard
 document.addEventListener("DOMContentLoaded", function () {
@@ -22,7 +23,12 @@ async function loadDashboardData() {
     console.log("📊 Loading dashboard data...");
 
     // Load data in parallel
-    await Promise.all([loadAssets(), loadTelemetry(), loadAlerts()]);
+    await Promise.all([
+      loadAssets(),
+      loadTelemetry(),
+      loadAlerts(),
+      loadWarrantyAlerts(),
+    ]);
 
     // Update UI
     updateSummaryCards();
@@ -91,6 +97,24 @@ async function loadAlerts() {
   }
 }
 
+// Load warranty alerts data
+async function loadWarrantyAlerts() {
+  try {
+    const response = await fetch(`${API_BASE}/assets/warranty-alerts/all`);
+    const result = await response.json();
+
+    if (result.success) {
+      warrantyAlertsData = result.data;
+      console.log(`🔧 Loaded ${warrantyAlertsData.length} warranty alerts`);
+    } else {
+      throw new Error(result.message);
+    }
+  } catch (error) {
+    console.error("Error loading warranty alerts:", error);
+    warrantyAlertsData = [];
+  }
+}
+
 // Update summary cards
 function updateSummaryCards() {
   // Total assets
@@ -107,6 +131,21 @@ function updateSummaryCards() {
 
   // Open alerts
   document.getElementById("open-alerts").textContent = alertsData.length;
+
+  // Warranty alerts (critical and expired only)
+  const criticalWarrantyAlerts = warrantyAlertsData.filter(
+    (alert) => alert.severity === "Critical" || alert.severity === "Expired"
+  );
+  document.getElementById("warranty-alerts").textContent =
+    criticalWarrantyAlerts.length;
+
+  // Make warranty alerts card clickable
+  const warrantyCard = document.querySelector(".card:nth-child(5)");
+  if (warrantyCard) {
+    warrantyCard.style.cursor = "pointer";
+    warrantyCard.onclick = () =>
+      (window.location.href = "warranty-alerts.html");
+  }
 
   // Average CPU usage
   if (telemetryData.length > 0) {

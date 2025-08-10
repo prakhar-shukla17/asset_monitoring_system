@@ -113,6 +113,9 @@ function updateAssetsTable() {
                     <button class="btn btn-secondary" onclick="editAsset('${
                       asset.asset_id
                     }')">Edit</button>
+                    <button class="btn btn-info" onclick="manageComponents('${
+                      asset.asset_id
+                    }')">🔧 Components</button>
                 </td>
             </tr>
         `;
@@ -176,3 +179,7 @@ function editAsset(assetId) {
   window.location.href = `asset-detail.html?id=${assetId}&edit=true`;
 }
 
+function manageComponents(assetId) {
+  // Redirect to hardware components page with the asset pre-selected
+  window.location.href = `hardware-components.html?asset=${assetId}`;
+}

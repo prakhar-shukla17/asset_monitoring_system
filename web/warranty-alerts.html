@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Warranty Alerts - Simple Asset Monitor</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .alert-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .alert-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .alert-severity {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .severity-expired {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .severity-critical {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .severity-warning {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .alert-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .detail-item {
+        font-size: 14px;
+      }
+
+      .detail-label {
+        font-weight: 500;
+        color: #666;
+      }
+
+      .alert-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .btn-view-asset {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-view-asset:hover {
+        background: #0056b3;
+      }
+
+      .warranty-summary {
+        background: #e9ecef;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .warranty-stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .warranty-stat {
+        text-align: center;
+      }
+
+      .warranty-stat .number {
+        font-size: 24px;
+        font-weight: bold;
+        display: block;
+      }
+
+      .warranty-stat .label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+      }
+
+      .expired {
+        color: #dc3545;
+      }
+      .critical {
+        color: #fd7e14;
+      }
+      .warning {
+        color: #ffc107;
+      }
+
+      .filter-controls {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .filter-controls select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🚨 Warranty Alerts</h1>
+        <div class="nav">
+          <a href="index.html">Dashboard</a>
+          <a href="assets.html">Assets</a>
+          <a href="hardware-components.html">Components</a>
+          <a href="warranty-alerts.html" class="active">Warranty Alerts</a>
+          <a href="alerts.html">Alerts</a>
+        </div>
+      </header>
+
+      <main>
+        <!-- Warranty Summary -->
+        <div class="warranty-summary">
+          <h3>📋 Warranty Overview</h3>
+          <div class="warranty-stats">
+            <div class="warranty-stat">
+              <span class="number expired" id="expired-count">0</span>
+              <span class="label">Expired</span>
+            </div>
+            <div class="warranty-stat">
+              <span class="number critical" id="critical-count">0</span>
+              <span class="label">Critical (≤7 days)</span>
+            </div>
+            <div class="warranty-stat">
+              <span class="number warning" id="warning-count">0</span>
+              <span class="label">Warning (≤30 days)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-controls">
+          <select id="severity-filter">
+            <option value="">All Severities</option>
+            <option value="Expired">Expired</option>
+            <option value="Critical">Critical</option>
+            <option value="Warning">Warning</option>
+          </select>
+          <select id="component-filter">
+            <option value="">All Components</option>
+            <option value="CPU">CPU</option>
+            <option value="RAM">RAM</option>
+            <option value="Storage">Storage</option>
+            <option value="Motherboard">Motherboard</option>
+            <option value="GPU">GPU</option>
+            <option value="Network Card">Network Card</option>
+            <option value="Power Supply">Power Supply</option>
+            <option value="Monitor">Monitor</option>
+            <option value="Keyboard">Keyboard</option>
+            <option value="Mouse">Mouse</option>
+            <option value="Other">Other</option>
+          </select>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search assets or components..."
+            style="
+              padding: 8px 12px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+            "
+          />
+        </div>
+
+        <!-- Warranty Alerts List -->
+        <div class="section">
+          <h2>🚨 Active Warranty Alerts</h2>
+          <div id="warranty-alerts-list">
+            <p class="loading">Loading warranty alerts...</p>
+          </div>
+        </div>
+      </main>
+
+      <footer>
+        <p>
+          Simple Asset Monitor v1.0.0 | Last updated:
+          <span id="last-updated">Never</span>
+        </p>
+      </footer>
+    </div>
+
+    <script src="warranty-alerts.js"></script>
+  </body>
+</html>

@@ -43,6 +43,74 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Get warranty alerts for an asset
+router.get("/:id/warranty-alerts", async (req, res) => {
+  try {
+    const asset = await Asset.findOne({ asset_id: req.params.id });
+    if (!asset) {
+      return res.status(404).json({
+        success: false,
+        message: "Asset not found",
+      });
+    }
+
+    const alerts = asset.warranty_alerts || [];
+
+    res.json({
+      success: true,
+      data: alerts,
+      count: alerts.length,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching warranty alerts",
+      error: error.message,
+    });
+  }
+});
+
+// Get all warranty alerts across all assets
+router.get("/warranty-alerts/all", async (req, res) => {
+  try {
+    const assets = await Asset.find();
+    const allAlerts = [];
+
+    assets.forEach((asset) => {
+      const alerts = asset.warranty_alerts || [];
+      alerts.forEach((alert) => {
+        allAlerts.push({
+          asset_id: asset.asset_id,
+          asset_name: asset.asset_name,
+          hostname: asset.hostname,
+          ...alert,
+        });
+      });
+    });
+
+    // Sort by severity and days until expiry
+    allAlerts.sort((a, b) => {
+      const severityOrder = { Expired: 0, Critical: 1, Warning: 2 };
+      const severityDiff =
+        severityOrder[a.severity] - severityOrder[b.severity];
+      if (severityDiff !== 0) return severityDiff;
+      return a.days_until_expiry - b.days_until_expiry;
+    });
+
+    res.json({
+      success: true,
+      data: allAlerts,
+      count: allAlerts.length,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching warranty alerts",
+      error: error.message,
+    });
+  }
+});
+
 // Register/Update asset (from agent)
 router.post("/register", async (req, res) => {
   try {
@@ -143,6 +211,130 @@ router.post("/register", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error registering asset",
+      error: error.message,
+    });
+  }
+});
+
+// Add hardware component
+router.post("/:id/components", async (req, res) => {
+  try {
+    const asset = await Asset.findOne({ asset_id: req.params.id });
+    if (!asset) {
+      return res.status(404).json({
+        success: false,
+        message: "Asset not found",
+      });
+    }
+
+    const componentData = {
+      ...req.body,
+      status: req.body.status || "Active",
+    };
+
+    // Initialize hardware_components array if it doesn't exist
+    if (!asset.hardware_components) {
+      asset.hardware_components = [];
+    }
+
+    asset.hardware_components.push(componentData);
+    await asset.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Hardware component added successfully",
+      data: componentData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error adding hardware component",
+      error: error.message,
+    });
+  }
+});
+
+// Update hardware component
+router.put("/:id/components/:componentIndex", async (req, res) => {
+  try {
+    const asset = await Asset.findOne({ asset_id: req.params.id });
+    if (!asset) {
+      return res.status(404).json({
+        success: false,
+        message: "Asset not found",
+      });
+    }
+
+    const componentIndex = parseInt(req.params.componentIndex);
+    if (
+      !asset.hardware_components ||
+      componentIndex >= asset.hardware_components.length
+    ) {
+      return res.status(404).json({
+        success: false,
+        message: "Component not found",
+      });
+    }
+
+    // Update the component
+    asset.hardware_components[componentIndex] = {
+      ...asset.hardware_components[componentIndex],
+      ...req.body,
+    };
+
+    await asset.save();
+
+    res.json({
+      success: true,
+      message: "Hardware component updated successfully",
+      data: asset.hardware_components[componentIndex],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating hardware component",
+      error: error.message,
+    });
+  }
+});
+
+// Delete hardware component
+router.delete("/:id/components/:componentIndex", async (req, res) => {
+  try {
+    const asset = await Asset.findOne({ asset_id: req.params.id });
+    if (!asset) {
+      return res.status(404).json({
+        success: false,
+        message: "Asset not found",
+      });
+    }
+
+    const componentIndex = parseInt(req.params.componentIndex);
+    if (
+      !asset.hardware_components ||
+      componentIndex >= asset.hardware_components.length
+    ) {
+      return res.status(404).json({
+        success: false,
+        message: "Component not found",
+      });
+    }
+
+    const deletedComponent = asset.hardware_components.splice(
+      componentIndex,
+      1
+    )[0];
+    await asset.save();
+
+    res.json({
+      success: true,
+      message: "Hardware component deleted successfully",
+      data: deletedComponent,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error deleting hardware component",
       error: error.message,
     });
   }

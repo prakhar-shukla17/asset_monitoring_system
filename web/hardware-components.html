@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hardware Components - Simple Asset Monitor</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .component-form {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .component-form h3 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+
+      .form-group {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #555;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .form-group textarea {
+        height: 80px;
+        resize: vertical;
+      }
+
+      .component-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .component-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .component-title {
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+      }
+
+      .component-status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .status-active {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status-failed {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .status-replaced {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .status-under-warranty {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+
+      .component-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .detail-item {
+        font-size: 14px;
+      }
+
+      .detail-label {
+        font-weight: 500;
+        color: #666;
+      }
+
+      .warranty-info {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 10px;
+      }
+
+      .warranty-alert {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 14px;
+      }
+
+      .warranty-critical {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .warranty-expired {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .component-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .btn-edit,
+      .btn-delete {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .btn-edit {
+        background: #007bff;
+        color: white;
+      }
+
+      .btn-delete {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-edit:hover {
+        background: #0056b3;
+      }
+      .btn-delete:hover {
+        background: #c82333;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .warranty-summary {
+        background: #e9ecef;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .warranty-summary h3 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .warranty-stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .warranty-stat {
+        text-align: center;
+      }
+
+      .warranty-stat .number {
+        font-size: 24px;
+        font-weight: bold;
+        display: block;
+      }
+
+      .warranty-stat .label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+      }
+
+      .expired {
+        color: #dc3545;
+      }
+      .critical {
+        color: #fd7e14;
+      }
+      .warning {
+        color: #ffc107;
+      }
+      .good {
+        color: #28a745;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🔧 Hardware Components</h1>
+        <div class="nav">
+          <a href="index.html">Dashboard</a>
+          <a href="assets.html">Assets</a>
+          <a href="hardware-components.html" class="active">Components</a>
+          <a href="alerts.html">Alerts</a>
+        </div>
+      </header>
+
+      <main>
+        <!-- Asset Selection -->
+        <div class="section">
+          <h2>Select Asset</h2>
+          <div class="form-group">
+            <select id="asset-selector">
+              <option value="">Select an asset...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Warranty Summary -->
+        <div
+          class="warranty-summary"
+          id="warranty-summary"
+          style="display: none"
+        >
+          <h3>📋 Warranty Overview</h3>
+          <div class="warranty-stats">
+            <div class="warranty-stat">
+              <span class="number expired" id="expired-count">0</span>
+              <span class="label">Expired</span>
+            </div>
+            <div class="warranty-stat">
+              <span class="number critical" id="critical-count">0</span>
+              <span class="label">Critical (≤7 days)</span>
+            </div>
+            <div class="warranty-stat">
+              <span class="number warning" id="warning-count">0</span>
+              <span class="label">Warning (≤30 days)</span>
+            </div>
+            <div class="warranty-stat">
+              <span class="number good" id="good-count">0</span>
+              <span class="label">Good (>30 days)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Component Form -->
+        <div class="section">
+          <h2>➕ Add Hardware Component</h2>
+          <div class="component-form">
+            <!-- Quick Component Type Buttons -->
+            <div style="margin-bottom: 20px">
+              <h4 style="margin-bottom: 10px; color: #333">
+                Quick Select Component Type:
+              </h4>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="selectComponentType('CPU')"
+                >
+                  CPU
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="selectComponentType('RAM')"
+                >
+                  RAM
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="selectComponentType('Storage')"
+                >
+                  Storage
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="selectComponentType('Other')"
+                >
+                  Other
+                </button>
+              </div>
+              <p style="margin-top: 10px; font-size: 14px; color: #666">
+                💡 <strong>Auto-populated fields</strong> (from detected
+                hardware) are read-only. <strong>Component Name</strong> can be
+                modified. <strong>Manual entry required</strong> for Purchase
+                Date, Warranty Start Date, and Status.
+              </p>
+            </div>
+
+            <form id="component-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="component-type">Component Type *</label>
+                  <select id="component-type" required>
+                    <option value="">Select type...</option>
+                    <option value="CPU">CPU</option>
+                    <option value="RAM">RAM</option>
+                    <option value="Storage">Storage</option>
+                    <option value="Motherboard">Motherboard</option>
+                    <option value="GPU">GPU</option>
+                    <option value="Network Card">Network Card</option>
+                    <option value="Power Supply">Power Supply</option>
+                    <option value="Monitor">Monitor</option>
+                    <option value="Keyboard">Keyboard</option>
+                    <option value="Mouse">Mouse</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="component-name">Component Name *</label>
+                  <input
+                    type="text"
+                    id="component-name"
+                    required
+                    placeholder="e.g., Intel i7-10700K"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="model">Model</label>
+                  <input
+                    type="text"
+                    id="model"
+                    placeholder="e.g., Core i7-10700K"
+                    readonly
+                    style="background-color: #f8f9fa; color: #6c757d"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="serial-number">Serial Number</label>
+                  <input
+                    type="text"
+                    id="serial-number"
+                    placeholder="e.g., SN123456789"
+                    readonly
+                    style="background-color: #f8f9fa; color: #6c757d"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="manufacturer">Manufacturer</label>
+                  <input
+                    type="text"
+                    id="manufacturer"
+                    placeholder="e.g., Intel"
+                    readonly
+                    style="background-color: #f8f9fa; color: #6c757d"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="vendor">Vendor</label>
+                  <input
+                    type="text"
+                    id="vendor"
+                    placeholder="e.g., Amazon"
+                    readonly
+                    style="background-color: #f8f9fa; color: #6c757d"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="purchase-date">Purchase Date *</label>
+                  <input type="date" id="purchase-date" required />
+                </div>
+                <div class="form-group">
+                  <label for="warranty-start">Warranty Start Date *</label>
+                  <input type="date" id="warranty-start" required />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="warranty-end">Warranty End Date</label>
+                  <input
+                    type="date"
+                    id="warranty-end"
+                    readonly
+                    style="background-color: #f8f9fa; color: #6c757d"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="warranty-duration"
+                    >Warranty Duration (months)</label
+                  >
+                  <input
+                    type="number"
+                    id="warranty-duration"
+                    min="0"
+                    placeholder="e.g., 36"
+                    readonly
+                    style="background-color: #f8f9fa; color: #6c757d"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="purchase-price">Purchase Price ($)</label>
+                  <input
+                    type="number"
+                    id="purchase-price"
+                    min="0"
+                    step="0.01"
+                    placeholder="e.g., 299.99"
+                    readonly
+                    style="background-color: #f8f9fa; color: #6c757d"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="status">Status *</label>
+                  <select id="status" required>
+                    <option value="Active">Active</option>
+                    <option value="Failed">Failed</option>
+                    <option value="Replaced">Replaced</option>
+                    <option value="Under Warranty">Under Warranty</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea
+                  id="notes"
+                  placeholder="Additional notes about this component..."
+                  readonly
+                  style="background-color: #f8f9fa; color: #6c757d"
+                ></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary">
+                Add Component
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+
+      <footer>
+        <p>
+          Simple Asset Monitor v1.0.0 | Last updated:
+          <span id="last-updated">Never</span>
+        </p>
+      </footer>
+    </div>
+
+    <script src="hardware-components.js"></script>
+  </body>
+</html>
