@@ -1,26 +1,85 @@
 const mongoose = require("mongoose");
 
-// Simple Asset Schema - keeping it basic
+// Enhanced Asset Schema - accommodating CSV data
 const assetSchema = new mongoose.Schema({
   // Basic Asset Info
-  asset_id: { type: String, required: true },
+  asset_id: { type: String, required: true, unique: true },
   asset_name: { type: String, required: true },
   hostname: { type: String, required: true },
   ip_address: { type: String },
   mac_address: { type: String },
 
-  // Asset Management
+  // CSV Data Fields
+  sr_no: { type: Number }, // Serial number from CSV
+  branch: { type: String, required: true, default: "Main Office" },
   asset_category: {
     type: String,
-    enum: ["Desktop", "Laptop", "Server", "Network"],
+    enum: [
+      "Desktop",
+      "Laptop",
+      "Server",
+      "Network",
+      "Switch",
+      "Router",
+      "DVR",
+      "Printer",
+      "Scanner",
+      "CBS System",
+      "Internet System",
+      "Networking Device",
+      "Peripheral Device",
+      "6 CCTV Camera",
+      "5 CCTV Camera",
+      "4 Camera",
+      "8 Camera",
+      "7 Camera",
+      "10 Camera",
+      "12 Camera",
+      "Passbook Printer",
+      "LaserJet Printer",
+      "Dot Matrix Printer",
+      "Other",
+      "-",
+    ],
     default: "Desktop",
   },
+  make: { type: String }, // Manufacturer (Dell, Lenovo, HP, etc.)
+  model: { type: String }, // Specific model
+  serial_number: { type: String },
+
+  // Criticality and Sensitivity
+  criticality: {
+    type: String,
+    enum: ["Critical", "High", "Medium", "Low"],
+    default: "Medium",
+  },
+  sensitivity: {
+    type: String,
+    enum: ["Sensitive", "Private", "Public"],
+    default: "Private",
+  },
+
+  // Software and Services
+  software_services: { type: String }, // CBS, Internet, etc.
+  vendor: { type: String }, // Airtel, Sify, etc.
+
+  // Dates and Values
+  allocation_date: { type: Date },
+  warranty_expiry: { type: Date },
+  purchase_value: { type: Number },
+
+  // Status and Management
   status: {
     type: String,
     enum: ["Active", "Inactive", "Decommissioned"],
     default: "Active",
   },
-  branch: { type: String, default: "Main Office" },
+  handled_by: { type: String }, // Responsible person
+  approved_by: { type: String }, // Approval authority
+
+  // Notes and Comments
+  notes: { type: String },
+  color_definition: { type: String }, // Additional notes from CSV
 
   // Hardware Info (basic)
   hardware_info: {
@@ -158,6 +217,13 @@ assetSchema.virtual("warranty_alerts").get(function () {
       return null;
     })
     .filter((alert) => alert !== null);
+});
+
+// Virtual field for CSV-style asset ID
+assetSchema.virtual("csv_asset_id").get(function () {
+  return `${
+    this.branch
+  }/${this.asset_name.toUpperCase()}/${this.sr_no?.toString().padStart(2, "0") || "01"}`;
 });
 
 module.exports = mongoose.model("Asset", assetSchema);

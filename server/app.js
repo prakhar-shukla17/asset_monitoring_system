@@ -23,6 +23,7 @@ app.use("/api/alerts", require("./routes/alerts"));
 app.use("/api/ml", require("./routes/ml"));
 app.use("/api/software", require("./routes/software"));
 app.use("/api/patch-registry", require("./routes/patch-registry"));
+app.use("/api/csv-import", require("./routes/csv-import"));
 
 // Basic health check
 app.get("/api/health", (req, res) => {
